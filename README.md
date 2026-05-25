@@ -17,7 +17,7 @@ Výsledkem je:
 BitcoLi jde opačným směrem:
 
 👉 mnoho malých uzlů  
-👉 více peněženek v jedné aplikaci - jedna je offline, platím/přijímám do jiné
+👉 více peněženek v jedné aplikaci - jedna je offline, platím/přijímám do jiné  
 👉 malé zůstatky („pár piv")  
 👉 důvěra mezi lidmi, které znám  
 
@@ -104,9 +104,9 @@ Tento systém není založen na právních smlouvách ani regulaci, ale na reál
 👉 malé částky  
 👉 známí lidé  
 👉 žádná byrokracie  
-👉 jednoduché nastavení
-👉 nezpochybnitelný zůstatek
-👉 jako zdroj pravdy se využívají podpisy transakcí
+👉 jednoduché nastavení  
+👉 nezpochybnitelný zůstatek  
+👉 jako zdroj pravdy se využívají podpisy transakcí  
 
 ---
 

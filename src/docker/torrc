@@ -1,0 +1,2 @@
+HiddenServiceDir /data/tor
+HiddenServicePort 80 bitcoli-app:27609

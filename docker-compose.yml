@@ -1,0 +1,96 @@
+services:
+  bitcoli:
+    user: "1000:1000"
+    build: .
+#    image: docentjaryn/bitcoli-app:0.0.2@sha256:679ee00649b4dc45626eb4333da38bba56bd0ddcb1dcb341a9ab52ed319be5b1
+    container_name: bitcoli-app
+    ports:
+      - "27608:27608"   # UI
+      - "27609:27609"   # API
+    environment:
+      BITCOLI_MYSQL_HOST: "${BITCOLI_MYSQL_HOST}"
+      BITCOLI_MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      BITCOLI_MYSQL_USER: "${BITCOLI_MYSQL_USER}"
+      BITCOLI_MYSQL_PSWD: "${BITCOLI_MYSQL_PSWD}"
+      BITCOLI_KEYS_DIR: "${BITCOLI_KEYS_DIR}"
+      BITCOLI_BACKUPS_DIR: "${BITCOLI_BACKUPS_DIR}"
+      BITCOLI_TOR_DIR: "${BITCOLI_TOR_DIR}"
+      BITCOLI_TOR_HOST: "${BITCOLI_TOR_HOST}"
+      BITCOLI_TOR_PROXY: "${BITCOLI_TOR_PROXY}"
+      LND_HOST: "${LND_HOST}"
+      LND_MACAROON: "${LND_MACAROON}"
+    volumes:
+      - ./data:/data
+      - "${LND_MACAROON_HOST_PATH}:${LND_MACAROON}:ro"
+    restart: unless-stopped
+    depends_on:
+      - tor
+      - mariadb
+    networks:
+      - umbrel_main_network
+
+  bitcoli-worker:
+    build: .
+#    image: docentjaryn/bitcoli-app:0.0.2@sha256:679ee00649b4dc45626eb4333da38bba56bd0ddcb1dcb341a9ab52ed319be5b1
+    container_name: bitcoli-worker
+    environment:
+      BITCOLI_MYSQL_HOST: "${BITCOLI_MYSQL_HOST}"
+      BITCOLI_MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      BITCOLI_MYSQL_USER: "${BITCOLI_MYSQL_USER}"
+      BITCOLI_MYSQL_PSWD: "${BITCOLI_MYSQL_PSWD}"
+      BITCOLI_KEYS_DIR: "${BITCOLI_KEYS_DIR}"
+      BITCOLI_BACKUPS_DIR: "${BITCOLI_BACKUPS_DIR}"
+      BITCOLI_TOR_DIR: "${BITCOLI_TOR_DIR}"
+      BITCOLI_TOR_HOST: "${BITCOLI_TOR_HOST}"
+      BITCOLI_TOR_PROXY: "${BITCOLI_TOR_PROXY}"
+      LND_HOST: "${LND_HOST}"
+      LND_MACAROON: "${LND_MACAROON}"
+    volumes:
+      - ./data/keys:/data/keys
+      - "${LND_MACAROON_HOST_PATH}:${LND_MACAROON}:ro"
+    depends_on:
+      - mariadb
+    networks:
+      - umbrel_main_network
+    restart: unless-stopped
+    command: >
+      bash -c "
+        php /var/www/common/ln-listener.php
+      "
+
+  mariadb:
+    image: mariadb:10.5.12@sha256:dfcba5641bdbfd7cbf5b07eeed707e6a3672f46823695a0d3aba2e49bbd9b1dd
+    user: "1000:1000"
+    # Port 3306 zámìrnì NENÍ exponován na hostu.
+    # Pro vzdálený pøístup pøi vývoji odkomentujte níže a zajistìte firewall:
+    #ports:
+    #  - "3306:3306" 
+    container_name: bitcoli-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./src/docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - umbrel_main_network
+
+  tor:
+    user: "1000:1000"
+    image: getumbrel/tor:0.4.7.8@sha256:2ace83f22501f58857fa9b403009f595137fa2e7986c4fda79d82a8119072b6a
+    container_name: bitcoli-tor
+    restart: on-failure
+    volumes:
+      - ./src/docker/torrc:/etc/tor/torrc:ro
+      - ./data/tor:/data/tor
+    environment:
+      HOME: "/tmp"
+    networks:
+      - umbrel_main_network
+
+networks:
+  umbrel_main_network:
+    external: true

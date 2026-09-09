@@ -61,8 +61,8 @@ services:
   mariadb:
     image: mariadb:10.5.12@sha256:dfcba5641bdbfd7cbf5b07eeed707e6a3672f46823695a0d3aba2e49bbd9b1dd
     user: "1000:1000"
-    # Port 3306 zámìrnì NENÍ exponován na hostu.
-    # Pro vzdálenı pøístup pøi vıvoji odkomentujte níe a zajistìte firewall:
+    # Port 3306 zÃ¡mÄ›rnÄ› NENÃ exponovÃ¡n na hostu.
+    # Pro vzdÃ¡lenÃ½ pÅ™Ã­stup pÅ™i vÃ½voji odkomentujte nÃ­Å¾e a zajistÄ›te firewall:
     #ports:
     #  - "3306:3306" 
     container_name: bitcoli-db

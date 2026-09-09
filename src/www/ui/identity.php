@@ -11,7 +11,9 @@ for ($i = 0; $i < count($invitations_t); $i++) {
         break;
     }
 }
-$connectionString = 'bitcoli:node/' . $nodeId . '@' . $onion . '?' . $invitations_t[$selectedinv_idx]['id'];
+$clearnetaddr = trim($configdb['clearnet_addr'] ?? '');
+$addr = ($clearnetaddr !== '') ? $clearnetaddr . ',' . $onion : $onion;
+$connectionString = 'bitcoli:node/' . $nodeId . '@' . $addr . '?' . $invitations_t[$selectedinv_idx]['id'];
 ?>
 
 <div class="card">
@@ -48,7 +50,7 @@ $connectionString = 'bitcoli:node/' . $nodeId . '@' . $onion . '?' . $invitation
         <?php
         ob_start();
         QRcode::png(
-                'node/' . $nodeId . '@' . $onion . '?' . $invitations_t[$selectedinv_idx]['id'],
+                'node/' . $nodeId . '@' . $addr . '?' . $invitations_t[$selectedinv_idx]['id'],
                 null,
                 QR_ECLEVEL_L,
                 5,
@@ -102,16 +104,31 @@ $connectionString = 'bitcoli:node/' . $nodeId . '@' . $onion . '?' . $invitation
     <?php endif; ?>
 
     <br>
-    <h2>API (Tor)</h2>
+    <h2>API</h2>
     <?php if ($onion != ''): ?>
         <label>Onion address</label>
         <code><?= htmlspecialchars($onion) ?></code>
-        <span class="status-dot green"></span>
-        <span style="font-size:0.85rem">Connected</span>
     <?php else: ?>
         <span class="status-dot yellow"></span>
         <span class="alert-muted">Onion address not ready yet.</span>
     <?php endif; ?>
+
+    <label>Clearnet address (optional)</label>
+    <form method="post">
+        <?= csrf_field() ?>
+        <input type="hidden" name="action" value="edit_clearnet">
+        <div style="display:flex; gap:0.5rem; align-items:flex-start;">
+            <input class="editable" name="clearnet_addr" style="flex:1"
+                   placeholder="http://x.x.x.x:<?= htmlspecialchars($cfg['API_PORT']) ?>"
+                   value="<?= htmlspecialchars($configdb['clearnet_addr'] ?? '') ?>">
+            <button class="btn btn-secondary" style="margin-top:0">Save</button>
+        </div>
+        <p class="alert-muted" style="font-size:0.78rem; margin-top:0.35rem;">
+            If set, it is prepended to the .onion address in the connection string.
+            Only http:// and https:// are allowed — if you omit the scheme, http:// is added automatically.
+            Leave empty to advertise the Tor address only.
+        </p>
+    </form>
 
     <hr class="separator">
 

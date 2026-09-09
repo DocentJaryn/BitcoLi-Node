@@ -354,8 +354,24 @@ function SEC_transactions($json) {
 
     $json_res->terms_valid_until = $terms_valid_until;
     $json_res->txs = $table;
-
+    
+    global $config;
+    $addr = $config['clearnet_addr'] ?? "";
+    $cfg = require __DIR__ . '/../common/config.php';
+    if ($addr == "") {
+      if (($cfg['TOR_HOST'] ?? "") != "") {
+        $addr = $cfg['TOR_HOST'];
+      }
+    } else {
+      if (($cfg['TOR_HOST'] ?? "") != "") {
+        $addr = $addr . ','.$cfg['TOR_HOST'];
+      }
+    }
+    if ($addr != "") {
+      $json_res->addr = $addr;
+    }
     encrypt_res($json_res);
+
 }
 
 function SEC_addinvoice($json) {

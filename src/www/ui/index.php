@@ -344,6 +344,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     writeconfig("node_name", $_POST['node_name']);
                     $success = true;
                     break;
+                case "edit_clearnet":
+                    $clearnet = trim($_POST['clearnet_addr'] ?? '');
+                    if ($clearnet === '') {
+                        writeconfig('clearnet_addr', '');   // prázdné = pouze Tor
+                        $success = true;
+                        break;
+                    }
+                    // Pokud uživatel nezadal žádné schéma, doplň http://
+                    if (!preg_match('#^[a-zA-Z][a-zA-Z0-9+.\-]*://#', $clearnet)) {
+                        $clearnet = 'http://' . $clearnet;
+                    }
+                    // Povolené je pouze http:// a https://, jiné protokoly odmítni
+                    $scheme = strtolower((string) parse_url($clearnet, PHP_URL_SCHEME));
+                    if ($scheme !== 'http' && $scheme !== 'https') {
+                        $error = 'Only http:// and https:// are allowed for the clearnet address.';
+                        break;
+                    }
+                    writeconfig('clearnet_addr', $clearnet);
+                    $success = true;
+                    break;
                 case "edit_invitation":
                     $GLOBALS["DB"]->query("UPDATE invitations SET level=?, id=?, description=?,cnt=? Where idx=?", [$_POST['level'], $_POST['id'], $_POST['description'], $_POST['cnt'], $_POST['idx']]);
                     $success = true;

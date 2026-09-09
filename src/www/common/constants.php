@@ -14,13 +14,13 @@ define('TABLES_TO_BACKUP', [
     'backup_nodes'
 ]);
 
-// Aktuální verze schématu DB poadovaná touto verzí aplikace.
-// Pøi startu aplikace se porovná s hodnotou db_version v tabulce config.
-// Pokud se liší, spustí se migrace (db_upgrading=1) a db_version se aktualizuje.
+// AktuÃ¡lnÃ­ verze schÃ©matu DB poÅ¾adovanÃ¡ touto verzÃ­ aplikace.
+// PÅ™i startu aplikace se porovnÃ¡ s hodnotou db_version v tabulce config.
+// Pokud se liÅ¡Ã­, spustÃ­ se migrace (db_upgrading=1) a db_version se aktualizuje.
 define('DB_VERSION', 1);
 
 // URL proxy serveru pro heartbeat registraci
 define('PROXY_HEARTBEAT_URL', 'https://bitcoli.com/bv2/api/heartbeat/');
  
-// Jak èasto posílat heartbeat (sekundy)
-define('PROXY_HEARTBEAT_INTERVAL', 270);  // 4.5 minuty — worker mìøí kadıch 5 minut
+// Jak Äasto posÃ­lat heartbeat (sekundy)
+define('PROXY_HEARTBEAT_INTERVAL', 270);  // 4.5 minuty â€” worker mÄ›Å™Ã­ kaÅ¾dÃ½ch 5 minut

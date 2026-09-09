@@ -12,6 +12,7 @@ return [
 'TOR_PROXY' => $_ENV['BITCOLI_TOR_PROXY'],
 'LND_HOST' => $_ENV['LND_HOST'],
 'LND_MACAROON' => $_ENV['LND_MACAROON'],
+'API_PORT' => $_ENV['BITCOLI_API_PORT'],
 ];
 } else {
 return [
@@ -27,5 +28,6 @@ return [
 'LND_HOST' => throw new RuntimeException('LND_HOST is not set. Set LND_HOST env variable or hardcode the host:port in config.php (e.g. 192.168.1.10:8080).'),
 //'LND_HOST' => '192.168.1.72:8080',
 'LND_MACAROON' => '/lnd/admin.macaroon',
+'API_PORT' => 27809,
 ];
 }
